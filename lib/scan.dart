@@ -11,8 +11,8 @@ class Scan {
     return version;
   }
 
-  static Future<String?> parse(String path) async {
-    final String? result = await _channel.invokeMethod('parse', path);
+  static Future<String> parse(String path) async {
+    final String result = await _channel.invokeMethod('parse', path);
     return result;
   }
 }
@@ -26,8 +26,8 @@ class ScanView extends StatefulWidget {
   })  : assert(scanAreaScale <= 1.0, 'scanAreaScale must <= 1.0'),
         assert(scanAreaScale > 0.0, 'scanAreaScale must > 0.0');
 
-  final ScanController? controller;
-  final CaptureCallback? onCapture;
+  final ScanController controller;
+  final CaptureCallback onCapture;
   final Color scanLineColor;
   final double scanAreaScale;
 
@@ -36,7 +36,7 @@ class ScanView extends StatefulWidget {
 }
 
 class _ScanViewState extends State<ScanView> {
-  MethodChannel? _channel;
+  MethodChannel _channel;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class _ScanViewState extends State<ScanView> {
     _channel?.setMethodCallHandler((MethodCall call) async {
       if (call.method == 'onCaptured') {
         if (widget.onCapture != null)
-          widget.onCapture!(call.arguments.toString());
+          widget.onCapture(call.arguments.toString());
       }
     });
     widget.controller?._channel = _channel;
@@ -95,7 +95,7 @@ class ScanArea {
 }
 
 class ScanController {
-  MethodChannel? _channel;
+  MethodChannel _channel;
 
   ScanController();
 
